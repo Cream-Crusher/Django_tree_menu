@@ -1,23 +1,18 @@
 from django.db import models
 
 
-class Node(models.Model):
+class TreeNode(models.Model):
     display_name = models.CharField(
         max_length=50,
-        db_index=True,
-        null=False)
-
-    parent = models.OneToOneField(
-        'self',
-        null=True,
-        on_delete=models.CASCADE,
-        related_name='child'
+        db_index=True
     )
 
-    children = models.ManyToManyField(
+    parent = models.ForeignKey(
         'self',
         blank=True,
-        related_name='parents'
+        null=True,
+        related_name='children',
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
