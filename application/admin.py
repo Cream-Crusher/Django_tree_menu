@@ -1,3 +1,7 @@
 from django.contrib import admin
+from application.models import TreeNode
 
-# Register your models here.
+
+@admin.register(TreeNode)
+class UserAdmin(admin.ModelAdmin):
+    pass
