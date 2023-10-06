@@ -2,10 +2,19 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="utf-8">
-  <title>Дерево</title>
+  <title>Древидное меню</title>
 </head>
-    <div>
-        <h4>Выберите для редиректа</h4>
-        <h>{{ nodes }} </h>
-    </div>
-</html>
+<body>
+    <ul>
+        <li>
+            <a href="{% if target_node.id is not None %}{% url 'show_page' target_node.id %}{% endif %}">{{ target_node.display_name }} id: {{ target_node.node_id }}</a>
+            {% if target_node.children %}
+                <ul>
+                    {% for child in target_node.children %}
+                    <li><a href="{% url 'show_page' child.id %}">{{ child.display_name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    </ul>
+</body>

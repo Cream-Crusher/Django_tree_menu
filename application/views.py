@@ -3,23 +3,20 @@ from .models import TreeNode
 
 
 def show_page(request, pk=None):
-    nodes_list = []
-
     if pk:
-        node = get_object_or_404(TreeNode, id=pk)
-        nodes_list.append(get_tree_json(node))
+        target_node = get_object_or_404(TreeNode, id=pk)
     else:
-        nodes = TreeNode.objects.filter(parent__isnull=True)
-        nodes_list = [get_tree_json(node) for node in nodes]
+        target_node = TreeNode.objects.get(parent__isnull=True)
 
-    return render(request, 'index.html', context={'nodes': nodes_list})
+    return render(request, 'index.html', context={'target_node': load_node(target_node)})
 
 
-def get_tree_json(node):
-    children = [get_tree_json(child) for child in node.children.all()]
+def load_node(node):
 
     return {
         'node_id': node.id,
         'display_name': node.display_name,
-        'children': children
+
+        'parent': node.parent,
+        'children': [child for child in node.children.all()]
     }
