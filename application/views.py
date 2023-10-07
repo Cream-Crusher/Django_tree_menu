@@ -3,12 +3,21 @@ from .models import TreeNode
 
 
 def show_page(request, pk=None):
+    path_to_root = []
+
     if pk:
         target_node = get_object_or_404(TreeNode, id=pk)
     else:
         target_node = TreeNode.objects.get(parent__isnull=True)
 
-    return render(request, 'index.html', context={'target_node': load_node(target_node)})
+    current_node = target_node
+    path_to_root.append(load_node(current_node))
+
+    while current_node.parent:
+        path_to_root.append(load_node(current_node.parent))
+        current_node = current_node.parent
+
+    return render(request, 'index.html', context={'nodes': path_to_root})
 
 
 def load_node(node):
