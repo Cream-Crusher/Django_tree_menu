@@ -25,13 +25,12 @@ def draw_menu(node_id):
         path_to_root.append(current_node.parent)
         current_node = current_node.parent
 
-    draw_nodes = draw_node(path_to_root[-1], path_to_root)
+    output_html_segment = draw_node(path_to_root[-1], path_to_root)
 
-    return mark_safe(draw_nodes)
+    return mark_safe(output_html_segment)
 
 
 def draw_node(node, path_to_root):
-
     output_str = ''
 
     href_str = reverse('show_page', args=[node.id])
