@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+{% load custom_tags %}
+
+{% draw_menu id as menu_items %}
+
 <html>
 <head>
     <title>Древовидное меню</title>
 </head>
 <body>
     <ul>
-        {% for node in nodes %}
+        {% for node in menu_items reversed %}
         <li>
             <a href="{% if node.node_id is not None %}{% url 'show_page' node.node_id %}{% endif %}">
                 {{ node.display_name }} id: {{ node.node_id }}
