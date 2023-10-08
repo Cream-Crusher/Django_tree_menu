@@ -14,9 +14,9 @@ def draw_menu(node_id):
     path_to_root = []
 
     if node_id:
-        target_node = get_object_or_404(TreeNode, id=node_id)
+        target_node = get_object_or_404(TreeNode.objects.loading_parent_queries(), id=node_id)
     else:
-        target_node = TreeNode.objects.get(parent__isnull=True)
+        target_node = TreeNode.objects.loading_children_queries().get(parent__isnull=True)
 
     current_node = target_node
     path_to_root.append(current_node)
