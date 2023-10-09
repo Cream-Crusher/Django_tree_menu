@@ -6,6 +6,7 @@
 * Python 3.10
 * Django 4.2.4
 * PostgreSQL 15.2
+* django-silk==5.0.4
 
 ## Запуск
 
