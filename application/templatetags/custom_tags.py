@@ -1,6 +1,6 @@
 from django import template
 from django.urls import reverse
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.utils.safestring import mark_safe
 
 from application.models import TreeNode
@@ -11,19 +11,28 @@ register = template.Library()
 
 @register.simple_tag
 def draw_menu(node_id):
-    path_to_root = []
 
-    if node_id:
-        target_node = get_object_or_404(TreeNode.objects.loading_parent_queries(), id=node_id)
-    else:
-        target_node = TreeNode.objects.loading_children_queries().get(parent__isnull=True)
+    if node_id:  # Чистый SQL запрос для оптимизации древидного меню
+        query_target_node = f'''
+                WITH RECURSIVE tree AS (
+          SELECT *
+          FROM application_treenode WHERE id = { node_id }
+          UNION ALL
+            SELECT node.*
+          FROM application_treenode AS node, tree AS t WHERE node.id = t.parent_id
+        )
+        SELECT * FROM tree
+        JOIN application_treenode AS child ON tree.id = child.parent_id
+        '''
+    else:  # Чистый SQL запрос для оптимизации древидного меню
+        query_target_node = '''
+        SELECT * FROM application_treenode WHERE parent_id IS NULL;
+        '''
 
-    current_node = target_node
-    path_to_root.append(current_node)
+    path_to_root = TreeNode.objects.raw(query_target_node, [node_id])
 
-    while current_node.parent:
-        path_to_root.append(current_node.parent)
-        current_node = current_node.parent
+    if not path_to_root:
+        raise Http404("Object not found")
 
     output_html_segment = draw_node(path_to_root[-1], path_to_root)
 
